@@ -4,12 +4,6 @@
     font-weight:300;
   }
 
-  .headerLogin {
-    margin-top: 3rem;
-    font-weight:300;
-    cursor: pointer;
-  }
-
   .headerRow {
     display: flex;
     flex-direction: row;
