@@ -1,5 +1,5 @@
 .containerCenter {
-    margin-top:2rem;
+    margin:2rem 0 4rem 0;
     display:flex;
     justify-content: center;
 }
@@ -11,6 +11,7 @@
     min-height: 400px;
 }
 
+@media(min-width:1200px ) {
 .technicalDocs {
     width: 210mm;
     height: 297mm;
@@ -20,6 +21,20 @@
     page-break-before: always;
     background: #fff;
     color: #000000;
+}
+}
+
+@media(min-width:1200px ) {
+.technicalDocs {
+    width: 100%;
+    height: 100%;
+    margin: 0 auto;
+    padding: 20mm;
+    overflow: hidden;
+    page-break-before: always;
+    background: #fff;
+    color: #000000;
+    }
 }
 
 .technicalDocs h1, .technicalDocs h2, .technicalDocs h3 {
