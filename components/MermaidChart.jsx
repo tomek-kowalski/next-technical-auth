@@ -5,19 +5,26 @@ export default function MermaidChart({ chartCode }) {
   const ref = useRef(null);
 
   useEffect(() => {
-    mermaid.initialize({ startOnLoad: false });
+    if (!chartCode || !ref.current) return;
 
-    if (ref.current) {
-      mermaid.run(); 
-      mermaid.render("mermaidChart", chartCode, (svgCode) => {
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: "default",
+    });
+
+    try {
+      mermaid.render("generatedChart", chartCode, (svgCode) => {
         if (ref.current) {
           ref.current.innerHTML = svgCode;
           console.log("✅ Mermaid Diagram Rendered");
         }
       });
+    } catch (error) {
+      console.error("❌ Mermaid Render Error:", error);
     }
   }, [chartCode]);
 
   return <div ref={ref} className="mermaid" />;
 }
+
 
