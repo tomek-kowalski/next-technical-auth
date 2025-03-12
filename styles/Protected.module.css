@@ -64,3 +64,27 @@
 .technicalDocs .page-break {
     page-break-before: always;
 }
+
+.technicalDocs table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+  
+  .technicalDocs th, .technicalDocs td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    word-break: break-word;
+  }
+  
+  .technicalDocs th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+    text-align: left;
+  }
+  
+  .technicalDocs a {
+    color: blue;
+    text-decoration: underline;
+  }
+  
