@@ -2,15 +2,15 @@ import { useEffect, useRef, useState } from "react";
 import mermaid from "mermaid";
 
 export default function MermaidChart({ chartCode }) {
-  const [isClient, setIsClient] = useState(false);
   const ref = useRef(null);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    setIsClient(true);
+    setIsMounted(true);
   }, []);
 
   useEffect(() => {
-    if (!isClient || !chartCode || !ref.current) {
+    if (!isMounted || !chartCode || !ref.current) {
       console.warn("Skipping Mermaid render: not in browser or missing chartCode/ref");
       return;
     }
@@ -32,12 +32,12 @@ export default function MermaidChart({ chartCode }) {
     } catch (error) {
       console.error("❌ Mermaid Render Error:", error);
     }
-  }, [isClient, chartCode]);
+  }, [isMounted, chartCode]);
 
   return (
     <div>
       <div ref={ref} className="mermaid">
-        {isClient ? <pre>{chartCode}</pre> : "Loading..."}
+        {!isMounted ? "Loading..." : <pre>{chartCode}</pre>}
       </div>
     </div>
   );
