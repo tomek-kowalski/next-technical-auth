@@ -25,7 +25,9 @@
 
     return (
         <div className={mainStyle.containerCenter}>
-        <ReactMarkdown>{content}</ReactMarkdown>
+            <div className={mainStyle.technicalDocs}>
+                <ReactMarkdown>{content}</ReactMarkdown>
+            </div>
         </div>
     );
     }

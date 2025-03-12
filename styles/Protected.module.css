@@ -10,3 +10,27 @@
     align-items: center;
     min-height: 400px;
 }
+
+.technicalDocs {
+    width: 210mm;
+    height: 297mm;
+    margin: 0 auto;
+    padding: 20mm;
+    overflow: hidden;
+    page-break-before: always;
+    background: #fff;
+    color: #000000;
+}
+
+.technicalDocs h1, .technicalDocs h2, .technicalDocs h3 {
+    margin-top: 0;
+}
+  
+.technicalDocs p {
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+  
+.technicalDocs .page-break {
+    page-break-before: always;
+}
