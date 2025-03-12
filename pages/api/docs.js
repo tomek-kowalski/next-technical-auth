@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth";
-import { authOptions } from "./auth/[...nextauth]";
+import { authOptions } from "./docs.js";
 import fs from "fs";
 import path from "path";
 
