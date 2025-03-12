@@ -21,10 +21,10 @@
     page-break-before: always;
     background: #fff;
     color: #000000;
-}
+    }
 }
 
-@media(min-width:1200px ) {
+@media(max-width:1199px ) {
 .technicalDocs {
     width: 100%;
     height: 100%;

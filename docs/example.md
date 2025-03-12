@@ -1,3 +1,3 @@
-# Welcome to My Docs  
+# tuneupfitness.com - Optimization plan 
 
 This is a **private** documentation page.
