@@ -12,7 +12,7 @@ export default function MermaidChart({ chartCode }) {
     }
 
     if (!chartCode) {
-      console.warn("Skipping Mermaid: Missing chartCode");
+      console.warn("Skipping Mermaid: Missing chartCode again");
       return;
     }
 
