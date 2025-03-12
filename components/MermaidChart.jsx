@@ -1,11 +1,15 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import mermaid from "mermaid";
 
 export default function MermaidChart({ chartCode }) {
-  useEffect(() => {
-    mermaid.initialize({ startOnLoad: true });
-    mermaid.contentLoaded();
-  }, []);
+  const ref = useRef(null);
 
-  return <div className="mermaid">{chartCode}</div>;
+  useEffect(() => {
+    if (ref.current) {
+      mermaid.initialize({ startOnLoad: true });
+      mermaid.contentLoaded();
+    }
+  }, [chartCode]);
+
+  return <div ref={ref} className="mermaid">{chartCode}</div>;
 }

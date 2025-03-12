@@ -4,11 +4,9 @@ import mainStyle from "../styles/Protected.module.css";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
-import remarkMath from "remark-math";
-import rehypeKatex from "rehype-katex";
 import rehypeHighlight from "rehype-highlight";
 import MermaidChart from "./MermaidChart";
-import "katex/dist/katex.min.css";
+
 
 export default function Protected() {
   const { data: session } = useSession();
@@ -34,8 +32,8 @@ export default function Protected() {
     <div className={mainStyle.containerCenter}>
       <div className={mainStyle.technicalDocs}>
         <ReactMarkdown
-          remarkPlugins={[remarkGfm, remarkMath]}
-          rehypePlugins={[rehypeRaw, rehypeKatex, rehypeHighlight]}
+        remarkPlugins={[remarkGfm]}
+        rehypePlugins={[rehypeRaw, rehypeHighlight]}
           components={{
             code({ node, inline, className, children, ...props }) {
               const match = /language-flow/.test(className || "");
