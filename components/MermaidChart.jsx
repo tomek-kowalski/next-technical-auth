@@ -5,11 +5,13 @@ export default function MermaidChart({ chartCode }) {
   const ref = useRef(null);
 
   useEffect(() => {
+    mermaid.initialize({ startOnLoad: false });
     if (ref.current) {
-      mermaid.initialize({ startOnLoad: true });
-      mermaid.contentLoaded();
+      mermaid.render("mermaidChart", chartCode, (svgCode) => {
+        ref.current.innerHTML = svgCode;
+      });
     }
   }, [chartCode]);
 
-  return <div ref={ref} className="mermaid">{chartCode}</div>;
+  return <div ref={ref} />;
 }

@@ -34,20 +34,16 @@ export default function Protected() {
         <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeRaw, rehypeHighlight]}
-          components={{
-            code({ node, inline, className, children, ...props }) {
-              const match = /language-flow/.test(className || "");
-              return match ? (
-                <MermaidChart chartCode={String(children).trim()} />
-              ) : (
-                <code className={className} {...props}>
-                  {children}
-                </code>
-              );
+        components={{
+            code({ className, children, ...props }) {
+            if (className && className.includes("language-mermaid")) {
+            return <MermaidChart chartCode={String(children).trim()} />;
+            }
+            return <code className={className} {...props}>{children}</code>;
             },
-          }}
+        }}
         >
-          {content}
+{       content}
         </ReactMarkdown>
       </div>
     </div>
