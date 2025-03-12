@@ -31,20 +31,12 @@ export default function MermaidChart({ chartCode }) {
 
     setTimeout(() => {
       if (ref.current) {
-        mermaid.render("generatedChart", chartCode, (svgCode) => {
-          ref.current.innerHTML = svgCode;
-          console.log("✅ Mermaid Diagram Rendered!");
-          setHasRendered(true);
-        });
+        ref.current.innerHTML = `<div class="mermaid">${chartCode}</div>`;
+        mermaid.run();
+        console.log("✅ Mermaid Diagram Rendered!");
       }
-    }, 0);
+    }, 100);
   }, [chartCode]);
 
-  return (
-    <div>
-      <div ref={ref} className="mermaid">
-        {!hasRendered ? "🔄 Loading Diagram..." : null}
-      </div>
-    </div>
-  );
+  return <div ref={ref} />;
 }
