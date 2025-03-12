@@ -3,41 +3,44 @@ import mermaid from "mermaid";
 
 export default function MermaidChart({ chartCode }) {
   const ref = useRef(null);
-  const [isMounted, setIsMounted] = useState(false);
+  const [hasRendered, setHasRendered] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (!isMounted || !chartCode || !ref.current) {
-      console.warn("Skipping Mermaid render: not in browser or missing chartCode/ref");
+    if (typeof window === "undefined") {
+      console.warn("Skipping Mermaid: Not in browser environment");
       return;
     }
 
-    console.log("Rendering Mermaid diagram...");
+    if (!chartCode) {
+      console.warn("Skipping Mermaid: Missing chartCode");
+      return;
+    }
+
+    if (!ref.current) {
+      console.warn("Skipping Mermaid: Ref is not ready");
+      return;
+    }
+
+    console.log("✅ Rendering Mermaid diagram...");
 
     mermaid.initialize({
       startOnLoad: false,
       theme: "default",
     });
 
-    try {
-      mermaid.render("generatedChart", chartCode, (svgCode) => {
-        if (ref.current) {
-          ref.current.innerHTML = svgCode;
-          console.log("✅ Mermaid Diagram Rendered:", svgCode);
-        }
-      });
-    } catch (error) {
-      console.error("❌ Mermaid Render Error:", error);
-    }
-  }, [isMounted, chartCode]);
+    mermaid.render("generatedChart", chartCode, (svgCode) => {
+      if (ref.current) {
+        ref.current.innerHTML = svgCode;
+        console.log("✅ Mermaid Diagram Rendered:", svgCode);
+        setHasRendered(true);
+      }
+    });
+  }, [chartCode]);
 
   return (
     <div>
       <div ref={ref} className="mermaid">
-        {!isMounted ? "Loading..." : <pre>{chartCode}</pre>}
+        {!hasRendered ? "🔄 Loading Diagram..." : null}
       </div>
     </div>
   );
