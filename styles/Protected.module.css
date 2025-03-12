@@ -68,7 +68,7 @@
 .technicalDocs table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 20px;
+    margin: 20px 0 20px 0;
   }
   
   .technicalDocs th, .technicalDocs td {
@@ -86,5 +86,6 @@
   .technicalDocs a {
     color: blue;
     text-decoration: underline;
+    font-weight:bold;
   }
   
