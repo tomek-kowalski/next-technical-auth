@@ -2,6 +2,8 @@
     import { useState, useEffect } from "react";
     import mainStyle from "../styles/Protected.module.css";
     import ReactMarkdown from "react-markdown";
+    import remarkGfm from "remark-gfm";
+    import rehypeRaw from "rehype-raw";
 
     export default function Protected() {
     const { data: session } = useSession();
@@ -26,7 +28,9 @@
     return (
         <div className={mainStyle.containerCenter}>
             <div className={mainStyle.technicalDocs}>
-                <ReactMarkdown>{content}</ReactMarkdown>
+            <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
+                {content}
+            </ReactMarkdown>
             </div>
         </div>
     );
