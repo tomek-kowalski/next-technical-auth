@@ -21,20 +21,23 @@ export default function MermaidChart({ chartCode }) {
       return;
     }
 
-    console.log("✅ Rendering Mermaid diagram...");
+    console.log("✅ Initializing Mermaid...");
 
     mermaid.initialize({
       startOnLoad: false,
+      securityLevel: "loose",
       theme: "default",
     });
 
-    mermaid.render("generatedChart", chartCode, (svgCode) => {
+    setTimeout(() => {
       if (ref.current) {
-        ref.current.innerHTML = svgCode;
-        console.log("✅ Mermaid Diagram Rendered:", svgCode);
-        setHasRendered(true);
+        mermaid.render("generatedChart", chartCode, (svgCode) => {
+          ref.current.innerHTML = svgCode;
+          console.log("✅ Mermaid Diagram Rendered!");
+          setHasRendered(true);
+        });
       }
-    });
+    }, 0);
   }, [chartCode]);
 
   return (
