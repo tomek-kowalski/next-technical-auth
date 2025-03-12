@@ -1,11 +1,17 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import mermaid from "mermaid";
 
 export default function MermaidChart({ chartCode }) {
+  const [isBrowser, setIsBrowser] = useState(false);
   const ref = useRef(null);
 
+
   useEffect(() => {
-    if (!chartCode || !ref.current) return;
+    setIsBrowser(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isBrowser || !chartCode || !ref.current) return; 
 
     mermaid.initialize({
       startOnLoad: false,
@@ -22,9 +28,10 @@ export default function MermaidChart({ chartCode }) {
     } catch (error) {
       console.error("❌ Mermaid Render Error:", error);
     }
-  }, [chartCode]);
+  }, [isBrowser, chartCode]);
 
   return <div ref={ref} className="mermaid" />;
 }
+
 
 
