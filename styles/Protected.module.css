@@ -42,67 +42,67 @@
 .technicalDocs h1, .technicalDocs h2, .technicalDocs h3 {
     margin-top: 0;
 }
-
 .technicalDocs h1 {
     font-size: 1.5rem;
 }
-
 .technicalDocs h2 {
     font-size:1.3rem;
 }
-
 .technicalDocs h3 {
     font-size:1.1rem;
     margin: 1rem 0 1rem 1rem;
 }
-  
 .technicalDocs p {
     line-height: 1.6;
     margin-bottom: 10px;
     font-size: 1rem;
 }
-  
 .technicalDocs .page-break {
     page-break-before: always;
 }
-
 .technicalDocs table {
     width: 100%;
     border-collapse: collapse;
     margin: 20px 0 20px 0;
   }
-  
-  .technicalDocs th, .technicalDocs td {
+.technicalDocs th, .technicalDocs td {
     border: 1px solid #ddd;
     padding: 8px;
     word-break: break-word;
-  }
-  
-  .technicalDocs th {
+}
+.technicalDocs th {
     background-color: #f4f4f4;
     font-weight: bold;
     text-align: left;
-  }
-  
-  .technicalDocs a {
+}
+.technicalDocs a {
     color: blue;
     text-decoration: underline;
     font-weight:bold;
-  }
-
+}
 .technicalDocs ul {
     list-style: none;
     padding-left: 0;
 }
-
 .technicalDocs ul li {
     margin: 5px 0;
 }
-
 .technicalDocs ul li ul {
     margin-left: 20px;
     padding-left: 15px;
     border-left: 2px solid #ddd;
 }
-
+.technicalDocs ol {
+    list-style-type: decimal;
+    padding-left: 20px;
+}
+.technicalDocs li {
+    margin: 5px 0;
+}
+.technicalDocs li ol {
+    padding-left: 20px;
+}
+.mermaid tspan {
+    font-size:18px;
+}
   

@@ -7,17 +7,18 @@
 
 | Table of Contents |
 | --- |
-<!-- TOC -->
-1. [tuneupfitness.com - Optimization plan](#tuneupfitnesscom---optimization-plan)
-   1. [Project requirements](#project-requirements)
-      1. [Stage 1: Documentation \& Blueprint Creation](#stage-1-documentation--blueprint-creation)
-      2. [Stage 2: Optimization \& Improvement Recommendations](#stage-2-optimization--improvement-recommendations)
-   2. [Provided Documents](#provided-documents)
-   3. [Page Speed Insights Analysis](#page-speed-insights-analysis)
-      1. [Mobile Performance](#mobile-performance)
-   4. [Mockup Woocommerce Process Diagrams](#mockup-woocommerce-process-diagrams)
-      1. [Woocommerce and Learn Dash integration details](#woocommerce-and-learn-dash-integration-details)
-<!-- /TOC --> |
+| <!-- TOC --> |
+| 1. [tuneupfitness.com - Optimization plan](#tuneupfitnesscom---optimization-plan) |
+|    1.1 [Project requirements](#project-requirements) |
+|        1.1.1 [Stage 1: Documentation & Blueprint Creation](#stage-1-documentation--blueprint-creation) |
+|        1.1.2 [Stage 2: Optimization & Improvement Recommendations](#stage-2-optimization--improvement-recommendations) |
+|    1.2 [Provided Documents](#provided-documents) |
+|    1.3 [Page Speed Insights Analysis](#page-speed-insights-analysis) |
+|        1.3.1 [Mobile Performance](#mobile-performance) |
+|    1.4 [Mockup Woocommerce Process Diagrams](#mockup-woocommerce-process-diagrams) |
+|        1.4.1 [Woocommerce and Learn Dash integration details](#woocommerce-and-learn-dash-integration-details) |
+| <!-- /TOC --> |
+
 ## Project requirements
 
 ### Stage 1: Documentation & Blueprint Creation
