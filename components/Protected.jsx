@@ -20,10 +20,11 @@ export default function Protected() {
 
 
       document.addEventListener("DOMContentLoaded", () => {
+        console.log('loaded script');
         const tableOfContents = Array.from(
           document.querySelectorAll("table th")
         ).find((th) => th.innerText.trim() === "Table of Contents");
-
+        console.log('tableOfContents ',tableOfContents );
         if (tableOfContents) {
           const tocLinks = tableOfContents.closest("table").querySelectorAll("td a[href^='#']");
           tocLinks.forEach((link) => {
