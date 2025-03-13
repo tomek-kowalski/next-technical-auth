@@ -10,7 +10,7 @@ import MermaidChart from "./MermaidChart";
 export default function Protected() {
   const { data: session } = useSession();
   const [content, setContent] = useState("");
-  const [toc, setToc] = useState([]);
+  const [toc, setToc] = useState([]); // State for Table of Contents
   const contentRef = useRef(null);
 
   useEffect(() => {
@@ -19,20 +19,21 @@ export default function Protected() {
         .then((res) => res.json())
         .then((data) => {
           setContent(data.content);
-          generateToC(data.content);
+          generateToC(data.content); // Generate ToC based on content
         });
     }
   }, [session]);
 
+  // Function to generate ToC based on Markdown content
   const generateToC = (markdownContent) => {
-    const regex = /^(#{1,6})\s+(.*)/gm;
+    const regex = /^(#{1,6})\s+(.*)/gm; // Regex to match headers (h1, h2, h3, etc.)
     let match;
     let tocLinks = [];
     
     while ((match = regex.exec(markdownContent)) !== null) {
-      const level = match[1].length;
-      const text = match[2];
-      const anchor = text.toLowerCase().replace(/\s+/g, '-');
+      const level = match[1].length; // Get the header level (h1 = 1, h2 = 2, etc.)
+      const text = match[2]; // Header text
+      const anchor = text.toLowerCase().replace(/\s+/g, '-'); // Create anchor ID
 
       tocLinks.push({
         level,
@@ -44,6 +45,7 @@ export default function Protected() {
     setToc(tocLinks);
   };
 
+  // Handle Table of Contents click
   const handleToCClick = (e) => {
     e.preventDefault();
     const targetText = e.target.innerText.trim();
@@ -79,7 +81,7 @@ export default function Protected() {
                 <a
                   href={`#${item.anchor}`}
                   onClick={handleToCClick}
-                  style={{ marginLeft: item.level * 20 }}
+                  style={{ marginLeft: item.level * 20 }} // Indent based on header level
                 >
                   {item.text}
                 </a>
@@ -100,15 +102,25 @@ export default function Protected() {
                 }
                 return <code className={className} {...props}>{children}</code>;
               },
-              h1: ({ node, ...props }) => (
-                <h1 id={props.children[0].toLowerCase().replace(/\s+/g, '-')}>{props.children}</h1>
-              ),
-              h2: ({ node, ...props }) => (
-                <h2 id={props.children[0].toLowerCase().replace(/\s+/g, '-')}>{props.children}</h2>
-              ),
-              h3: ({ node, ...props }) => (
-                <h3 id={props.children[0].toLowerCase().replace(/\s+/g, '-')}>{props.children}</h3>
-              ),
+              h1: ({ node, ...props }) => {
+                const text = props.children && typeof props.children[0] === 'string' ? props.children[0] : '';
+                return (
+                  <h1 id={text.toLowerCase().replace(/\s+/g, '-')}>{props.children}</h1>
+                );
+              },
+              h2: ({ node, ...props }) => {
+                const text = props.children && typeof props.children[0] === 'string' ? props.children[0] : '';
+                return (
+                  <h2 id={text.toLowerCase().replace(/\s+/g, '-')}>{props.children}</h2>
+                );
+              },
+              h3: ({ node, ...props }) => {
+                const text = props.children && typeof props.children[0] === 'string' ? props.children[0] : '';
+                return (
+                  <h3 id={text.toLowerCase().replace(/\s+/g, '-')}>{props.children}</h3>
+                );
+              },
+              // Add more if needed for h4, h5, h6
             }}
           >
             {content}
