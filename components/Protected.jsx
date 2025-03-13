@@ -11,16 +11,12 @@ export default function Protected() {
   const { data: session } = useSession();
   const [content, setContent] = useState("");
   const contentRef = useRef(null);
-  const [toc, setToc] = useState([]);
 
   useEffect(() => {
     if (session) {
       fetch("/api/docs")
         .then((res) => res.json())
-        .then((data) => {
-          setContent(data.content);
-          generateTableOfContents(data.content);
-        });
+        .then((data) => setContent(data.content));
     }
   }, [session]);
 
@@ -32,44 +28,44 @@ export default function Protected() {
     );
   }
 
-
   const handleToCClick = (e) => {
     e.preventDefault();
-    const targetId = e.target.getAttribute("href").substring(1); // Get the target ID
+    const targetId = e.target.getAttribute("href").substring(1); // Get the ID from href
     const targetElement = document.getElementById(targetId);
 
     if (targetElement) {
+      // Scroll to the target element smoothly
       targetElement.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  };
-
-  const generateTableOfContents = (markdownContent) => {
-    const tocItems = [];
-    const headings = markdownContent.match(/(#{1,6})\s(.*?)(?=\n|$)/g);
-
-    if (headings) {
-      headings.forEach((heading) => {
-        const level = heading.match(/^#{1,6}/)[0].length;
-        const title = heading.replace(/^#{1,6}\s/, "").trim();
-        const id = title.toLowerCase().replace(/\s+/g, "-");
-        tocItems.push({ level, title, id });
-      });
-      setToc(tocItems);
     }
   };
 
   return (
     <div className={mainStyle.containerCenter}>
       <div className={mainStyle.technicalDocs}>
-        {/* Render Table of Contents dynamically */}
-        <div style={{ cursor: "pointer" }} onClick={handleToCClick}>
+        {/* Static Table of Contents */}
+        <div style={{ cursor: "pointer" }}>
           <ul>
-            {toc.map((item) => (
-              <li key={item.id}>
-                {`${"  ".repeat(item.level - 1)}${item.level === 1 ? "" : " "}`}
-                <a href={`#${item.id}`}>{item.title}</a>
-              </li>
-            ))}
+            <li><a href="#tuneupfitnesscom---optimization-plan" onClick={handleToCClick}>tuneupfitness.com - Optimization plan</a></li>
+            <li>
+              <a href="#project-requirements" onClick={handleToCClick}>Project requirements</a>
+              <ul>
+                <li><a href="#stage-1-documentation--blueprint-creation" onClick={handleToCClick}>Stage 1: Documentation & Blueprint Creation</a></li>
+                <li><a href="#stage-2-optimization--improvement-recommendations" onClick={handleToCClick}>Stage 2: Optimization & Improvement Recommendations</a></li>
+              </ul>
+            </li>
+            <li><a href="#provided-documents" onClick={handleToCClick}>Provided Documents</a></li>
+            <li>
+              <a href="#page-speed-insights-analysis" onClick={handleToCClick}>Page Speed Insights Analysis</a>
+              <ul>
+                <li><a href="#mobile-performance" onClick={handleToCClick}>Mobile Performance</a></li>
+              </ul>
+            </li>
+            <li>
+              <a href="#mockup-woocommerce-process-diagrams" onClick={handleToCClick}>Mockup Woocommerce Process Diagrams</a>
+              <ul>
+                <li><a href="#woocommerce-and-learn-dash-integration-details" onClick={handleToCClick}>Woocommerce and Learn Dash integration details</a></li>
+              </ul>
+            </li>
           </ul>
         </div>
 
