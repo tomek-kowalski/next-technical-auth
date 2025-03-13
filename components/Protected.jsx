@@ -16,7 +16,10 @@ export default function Protected() {
     if (session) {
       fetch("/api/docs")
         .then((res) => res.json())
-        .then((data) => setContent(data.content));
+        .then((data) => {
+          console.log("Fetched content:", data.content);
+          setContent(data.content);
+        });
     }
   }, [session]);
 
@@ -31,6 +34,7 @@ export default function Protected() {
   // Handle clicks from Table of Contents links
   const handleToCClick = (e) => {
     e.preventDefault();
+    console.log("ToC link clicked:", e.target);
 
     const targetText = e.target.innerText;
     const contentDiv = contentRef.current;
@@ -40,13 +44,17 @@ export default function Protected() {
         .find(el => el.innerText.trim() === targetText.trim());
 
       if (matchingElement) {
+        console.log("Found matching element:", matchingElement);
         matchingElement.scrollIntoView({ behavior: "smooth", block: "start" });
+      } else {
+        console.log("No matching element found for:", targetText);
       }
     }
   };
 
   // Generate the Table of Contents based on markdown
   const generateTableOfContents = (markdown) => {
+    console.log("Generating Table of Contents for markdown:", markdown);
     const headers = [];
     let currentNumber = [];
 
@@ -83,19 +91,24 @@ export default function Protected() {
         </tbody>
       </table>
     `;
+    console.log("Generated ToC:", tocTable);
     return tocTable;
   };
 
   // Insert the ToC table where the markdown table exists
   const insertTableOfContents = (markdown) => {
+    console.log("Inserting ToC into markdown:", markdown);
     const tableMatch = markdown.match(/<table.*?<\/table>/);
     if (tableMatch) {
+      console.log("Table found in markdown, replacing it with ToC...");
       return markdown.replace(tableMatch[0], generateTableOfContents(markdown));
     }
+    console.log("No table found in markdown, returning as is.");
     return markdown;
   };
 
   const contentWithToc = insertTableOfContents(content);
+  console.log("Content with Table of Contents inserted:", contentWithToc);
 
   return (
     <div className={mainStyle.containerCenter}>
