@@ -27,15 +27,20 @@ export default function Protected() {
   useEffect(() => {
     if (contentRef.current) {
       console.log("🔍 Setting up MutationObserver to detect changes in Markdown content...");
-
+  
       const observer = new MutationObserver(() => {
         console.log("🔄 DOM Updated: Checking for Markdown-generated Table of Contents...");
+        
+        observer.disconnect();
+        
         replaceMarkdownTable();
+  
+        observer.observe(contentRef.current, { childList: true, subtree: true });
       });
-
+  
       observer.observe(contentRef.current, { childList: true, subtree: true });
       observerRef.current = observer;
-
+  
       return () => observer.disconnect();
     }
   }, [content]);
@@ -50,20 +55,24 @@ export default function Protected() {
 
   const replaceMarkdownTable = () => {
     if (!contentRef.current) return;
-
+  
     console.log("🔍 Scanning for <table> elements inside rendered Markdown...");
-
+  
     const tables = contentRef.current.querySelectorAll("table");
-
+  
     tables.forEach((table) => {
       if (table.innerText.includes("Table of Contents") || table.innerHTML.includes("<!-- TOC -->")) {
-        console.log("✅ Found the Markdown Table of Contents:", table);
+        if (table.dataset.replaced === "true") return;
 
+        console.log("✅ Found the Markdown Table of Contents:", table);
+  
         const newToC = document.createElement("div");
         newToC.innerHTML = generateTableOfContents(content);
         newToC.addEventListener("click", handleToCClick);
-
+  
         table.replaceWith(newToC);
+        newToC.dataset.replaced = "true";
+  
         console.log("✅ Markdown Table of Contents successfully replaced!");
       }
     });
