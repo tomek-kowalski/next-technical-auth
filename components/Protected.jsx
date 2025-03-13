@@ -97,18 +97,20 @@ export default function Protected() {
     let currentNumber = [];
 
     markdown.split("\n").forEach((line) => {
-      const match = line.match(/^(#+)\s*(.*)/);
-      if (match) {
-        const level = match[1].length;
-        const title = match[2].trim();
+        const match = line.match(/^(#+)\s*(.*)/);
+        if (match) {
+            const level = match[1].length;
+            let title = match[2].trim();
 
-        currentNumber = currentNumber.slice(0, level - 1);
-        currentNumber.push(currentNumber.length + 1);
+            title = title.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1");
 
-        const tocNumber = currentNumber.join(".");
+            currentNumber = currentNumber.slice(0, level - 1);
+            currentNumber.push(currentNumber.length + 1);
 
-        headers.push({ level, title, tocNumber });
-      }
+            const tocNumber = currentNumber.join(".");
+
+            headers.push({ level, title, tocNumber });
+        }
     });
 
     return `
@@ -119,16 +121,17 @@ export default function Protected() {
         <tbody>
           ${headers
             .map(
-              ({ tocNumber, title }) => `
+                ({ tocNumber, title }) => `
                 <tr>
-                  <td>${tocNumber} <a href="#${title.toLowerCase().replace(/\s+/g, '-')}">${title}</a></td>
+                  <td>${tocNumber}. <a href="#${title.toLowerCase().replace(/\s+/g, '-')}">${title}</a></td>
                 </tr>`
             )
             .join("")}
         </tbody>
       </table>
     `;
-  };
+};
+
 
   return (
     <div className={mainStyle.containerCenter}>
