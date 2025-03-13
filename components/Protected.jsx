@@ -13,18 +13,23 @@ export default function Protected() {
   const [content, setContent] = useState("");
   const [hasTableOfContents, setHasTableOfContents] = useState(false);
 
-  useEffect(() => { 
+  useEffect(() => {
     if (session) {
       fetch("/api/docs")
         .then((res) => res.json())
         .then((data) => {
           setContent(data.content);
-
-          const tableOfContentsExists = data.content.includes("<th>Table of Contents</th>");
-          setHasTableOfContents(tableOfContentsExists);
         });
     }
   }, [session]);
+
+  useEffect(() => {
+    // Check for the table of contents after content has been rendered
+    if (content) {
+      const tableOfContentsExists = content.includes("<th>Table of Contents</th>");
+      setHasTableOfContents(tableOfContentsExists);
+    }
+  }, [content]);
 
   if (!session) {
     return (
@@ -37,7 +42,7 @@ export default function Protected() {
   return (
     <div className={mainStyle.containerCenter}>
       <div className={mainStyle.technicalDocs}>
-        {/* Render TableOfContents only if exists */}
+        {/* Conditionally render TableOfContents */}
         {hasTableOfContents && <TableOfContents />}
 
         <ReactMarkdown
