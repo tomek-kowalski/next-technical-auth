@@ -74,15 +74,16 @@ export default function Protected() {
 
   const replaceMarkdownTableOfContents = (markdown) => {
     console.log("Raw markdown before replacement:", markdown);
-
-    const tocRegex = /\| Table of Contents \|\n\| --- \|[\s\S]+?\| <!-- \/TOC --> \|/;
+  
+    const tocRegex = /\| Table of Contents \|\n\|[-\s]+\|\n([\s\S]+?)\n\| <!-- \/TOC --> \|/;
+  
     const match = markdown.match(tocRegex);
-
+  
     if (match) {
       console.log("Markdown Table of Contents found, replacing it...");
       return markdown.replace(tocRegex, generateTableOfContents(markdown));
     }
-
+  
     console.log("No markdown Table of Contents found, returning as is.");
     return markdown;
   };
