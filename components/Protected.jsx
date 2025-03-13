@@ -18,7 +18,7 @@ export default function Protected() {
         .then((res) => res.json())
         .then((data) => {
           console.log("Fetched content:", data.content);
-          setContent(data.content);
+          setContent(replaceMarkdownTableOfContents(data.content));
         });
     }
   }, [session]);
@@ -31,40 +31,17 @@ export default function Protected() {
     );
   }
 
-  // Handle clicks from Table of Contents links
-  const handleToCClick = (e) => {
-    e.preventDefault();
-    console.log("ToC link clicked:", e.target);
-
-    const targetText = e.target.innerText;
-    const contentDiv = contentRef.current;
-
-    if (contentDiv) {
-      const matchingElement = Array.from(contentDiv.querySelectorAll("h1, h2, h3, h4, h5, h6, p"))
-        .find(el => el.innerText.trim() === targetText.trim());
-
-      if (matchingElement) {
-        console.log("Found matching element:", matchingElement);
-        matchingElement.scrollIntoView({ behavior: "smooth", block: "start" });
-      } else {
-        console.log("No matching element found for:", targetText);
-      }
-    }
-  };
-
-  // Generate the Table of Contents based on markdown
   const generateTableOfContents = (markdown) => {
     console.log("Generating Table of Contents for markdown:", markdown);
     const headers = [];
     let currentNumber = [];
 
-    markdown.split("\n").forEach(line => {
+    markdown.split("\n").forEach((line) => {
       const match = line.match(/^(#+)\s*(.*)/);
       if (match) {
-        const level = match[1].length; // Number of "#" determines level
+        const level = match[1].length;
         const title = match[2].trim();
 
-        // Update numbering based on level
         currentNumber = currentNumber.slice(0, level - 1);
         currentNumber.push(currentNumber.length + 1);
 
@@ -87,7 +64,7 @@ export default function Protected() {
                   <td>${tocNumber} <a href="#${title.toLowerCase().replace(/\s+/g, '-')}">${title}</a></td>
                 </tr>`
             )
-            .join('')}
+            .join("")}
         </tbody>
       </table>
     `;
@@ -95,25 +72,24 @@ export default function Protected() {
     return tocTable;
   };
 
-  // Insert the ToC table where the markdown table exists
-  const insertTableOfContents = (markdown) => {
-    console.log("Inserting ToC into markdown:", markdown);
-    const tableMatch = markdown.match(/<table.*?<\/table>/);
-    if (tableMatch) {
-      console.log("Table found in markdown, replacing it with ToC...");
-      return markdown.replace(tableMatch[0], generateTableOfContents(markdown));
+  const replaceMarkdownTableOfContents = (markdown) => {
+    console.log("Raw markdown before replacement:", markdown);
+
+    const tocRegex = /\| Table of Contents \|\n\| --- \|[\s\S]+?\| <!-- \/TOC --> \|/;
+    const match = markdown.match(tocRegex);
+
+    if (match) {
+      console.log("Markdown Table of Contents found, replacing it...");
+      return markdown.replace(tocRegex, generateTableOfContents(markdown));
     }
-    console.log("No table found in markdown, returning as is.");
+
+    console.log("No markdown Table of Contents found, returning as is.");
     return markdown;
   };
-
-  const contentWithToc = insertTableOfContents(content);
-  console.log("Content with Table of Contents inserted:", contentWithToc);
 
   return (
     <div className={mainStyle.containerCenter}>
       <div className={mainStyle.technicalDocs}>
-        {/* Render the content with replaced table with Table of Contents */}
         <div ref={contentRef}>
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
@@ -127,17 +103,9 @@ export default function Protected() {
               },
             }}
           >
-            {contentWithToc}
+            {content}
           </ReactMarkdown>
         </div>
-
-        {/* Handle ToC click after rendering */}
-        <div
-          dangerouslySetInnerHTML={{
-            __html: contentWithToc,
-          }}
-          onClick={handleToCClick} // Attach the click handler to the entire ToC
-        />
       </div>
     </div>
   );
