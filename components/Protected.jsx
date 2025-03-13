@@ -11,7 +11,7 @@ export default function Protected() {
   const { data: session } = useSession();
   const [content, setContent] = useState("");
   const contentRef = useRef(null);
-  const [tableInserted, setTableInserted] = useState(false);
+  const observerRef = useRef(null);
 
   useEffect(() => {
     if (session) {
@@ -25,26 +25,20 @@ export default function Protected() {
   }, [session]);
 
   useEffect(() => {
-    if (!tableInserted && contentRef.current) {
-      console.log("🔍 Searching for Markdown-generated ToC in rendered HTML...");
+    if (contentRef.current) {
+      console.log("🔍 Setting up MutationObserver to detect changes in Markdown content...");
 
-      const markdownTable = contentRef.current.querySelector("table");
-      if (markdownTable) {
-        console.log("✅ Markdown Table of Contents found. Removing it...");
+      const observer = new MutationObserver(() => {
+        console.log("🔄 DOM Updated: Checking for Markdown-generated Table of Contents...");
+        replaceMarkdownTable();
+      });
 
-        markdownTable.remove();
+      observer.observe(contentRef.current, { childList: true, subtree: true });
+      observerRef.current = observer;
 
-        const newToC = document.createElement("div");
-        newToC.innerHTML = generateTableOfContents(content);
-        newToC.addEventListener("click", handleToCClick);
-        contentRef.current.prepend(newToC);
-
-        setTableInserted(true);
-      } else {
-        console.log("❌ No Markdown Table of Contents found yet.");
-      }
+      return () => observer.disconnect();
     }
-  }, [content, tableInserted]);
+  }, [content]);
 
   if (!session) {
     return (
@@ -53,6 +47,27 @@ export default function Protected() {
       </div>
     );
   }
+
+  const replaceMarkdownTable = () => {
+    if (!contentRef.current) return;
+
+    console.log("🔍 Scanning for <table> elements inside rendered Markdown...");
+
+    const tables = contentRef.current.querySelectorAll("table");
+
+    tables.forEach((table) => {
+      if (table.innerText.includes("Table of Contents") || table.innerHTML.includes("<!-- TOC -->")) {
+        console.log("✅ Found the Markdown Table of Contents:", table);
+
+        const newToC = document.createElement("div");
+        newToC.innerHTML = generateTableOfContents(content);
+        newToC.addEventListener("click", handleToCClick);
+
+        table.replaceWith(newToC);
+        console.log("✅ Markdown Table of Contents successfully replaced!");
+      }
+    });
+  };
 
   const handleToCClick = (e) => {
     e.preventDefault();
