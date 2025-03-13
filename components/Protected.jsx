@@ -28,30 +28,44 @@ export default function Protected() {
     );
   }
 
-  // Function to generate the Table of Contents
+  // Handle clicks from Table of Contents links
+  const handleToCClick = (e) => {
+    e.preventDefault();
+
+    const targetText = e.target.innerText;
+    const contentDiv = contentRef.current;
+
+    if (contentDiv) {
+      const matchingElement = Array.from(contentDiv.querySelectorAll("h1, h2, h3, h4, h5, h6, p"))
+        .find(el => el.innerText.trim() === targetText.trim());
+
+      if (matchingElement) {
+        matchingElement.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+  };
+
+  // Generate the Table of Contents based on markdown
   const generateTableOfContents = (markdown) => {
     const headers = [];
     let currentNumber = [];
 
-    // Parse the markdown for headers and generate a hierarchical TOC
     markdown.split("\n").forEach(line => {
       const match = line.match(/^(#+)\s*(.*)/);
       if (match) {
-        const level = match[1].length; // number of "#" determines level
+        const level = match[1].length; // Number of "#" determines level
         const title = match[2].trim();
 
-        // Update the current number for TOC based on the header level
+        // Update numbering based on level
         currentNumber = currentNumber.slice(0, level - 1);
         currentNumber.push(currentNumber.length + 1);
 
-        // Generate a string of the current TOC number
         const tocNumber = currentNumber.join(".");
 
         headers.push({ level, title, tocNumber });
       }
     });
 
-    // Create a table of contents in HTML format
     const tocTable = `
       <table>
         <thead>
@@ -72,17 +86,21 @@ export default function Protected() {
     return tocTable;
   };
 
+  // Insert the ToC table where the markdown table exists
   const insertTableOfContents = (markdown) => {
-    // Replace first instance of <table> with the generated Table of Contents
-    return markdown.replace(/<table.*?<\/table>/, generateTableOfContents(markdown));
+    const tableMatch = markdown.match(/<table.*?<\/table>/);
+    if (tableMatch) {
+      return markdown.replace(tableMatch[0], generateTableOfContents(markdown));
+    }
+    return markdown;
   };
 
-  const updatedContent = insertTableOfContents(content);
+  const contentWithToc = insertTableOfContents(content);
 
   return (
     <div className={mainStyle.containerCenter}>
       <div className={mainStyle.technicalDocs}>
-        {/* Render the updated markdown content with replaced Table of Contents */}
+        {/* Render the content with replaced table with Table of Contents */}
         <div ref={contentRef}>
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
@@ -96,9 +114,17 @@ export default function Protected() {
               },
             }}
           >
-            {updatedContent}
+            {contentWithToc}
           </ReactMarkdown>
         </div>
+
+        {/* Handle ToC click after rendering */}
+        <div
+          dangerouslySetInnerHTML={{
+            __html: contentWithToc,
+          }}
+          onClick={handleToCClick} // Attach the click handler to the entire ToC
+        />
       </div>
     </div>
   );
