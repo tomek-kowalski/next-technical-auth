@@ -17,7 +17,10 @@ export default function Protected() {
     if (session) {
       fetch("/api/docs")
         .then((res) => res.json())
-        .then((data) => setContent(data.content));
+        .then((data) => {
+          console.log("📥 Fetched Content:", data.content);
+          setContent(data.content);
+        });
     }
   }, [session]);
 
@@ -27,11 +30,15 @@ export default function Protected() {
 
       const markdownTable = contentRef.current.querySelector("table");
       if (markdownTable) {
-        console.log("✅ Markdown Table of Contents found, replacing it...");
+        console.log("✅ Markdown Table of Contents found. Removing it...");
+
+        markdownTable.remove();
 
         const newToC = document.createElement("div");
         newToC.innerHTML = generateTableOfContents(content);
-        markdownTable.replaceWith(newToC);
+        newToC.addEventListener("click", handleToCClick);
+        contentRef.current.prepend(newToC);
+
         setTableInserted(true);
       } else {
         console.log("❌ No Markdown Table of Contents found yet.");
@@ -47,11 +54,25 @@ export default function Protected() {
     );
   }
 
+  const handleToCClick = (e) => {
+    e.preventDefault();
+    if (!contentRef.current) return;
+
+    const targetText = e.target.innerText;
+    const matchingElement = Array.from(
+      contentRef.current.querySelectorAll("h1, h2, h3, h4, h5, h6, p")
+    ).find((el) => el.innerText.trim() === targetText.trim());
+
+    if (matchingElement) {
+      matchingElement.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
   const generateTableOfContents = (markdown) => {
     const headers = [];
     let currentNumber = [];
 
-    markdown.split("\n").forEach(line => {
+    markdown.split("\n").forEach((line) => {
       const match = line.match(/^(#+)\s*(.*)/);
       if (match) {
         const level = match[1].length;
