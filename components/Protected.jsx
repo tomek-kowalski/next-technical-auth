@@ -11,17 +11,33 @@ export default function Protected() {
   const { data: session } = useSession();
   const [content, setContent] = useState("");
   const contentRef = useRef(null);
+  const [tableInserted, setTableInserted] = useState(false);
 
   useEffect(() => {
     if (session) {
       fetch("/api/docs")
         .then((res) => res.json())
-        .then((data) => {
-          console.log("Fetched content:", data.content);
-          setContent(replaceMarkdownTableOfContents(data.content));
-        });
+        .then((data) => setContent(data.content));
     }
   }, [session]);
+
+  useEffect(() => {
+    if (!tableInserted && contentRef.current) {
+      console.log("🔍 Searching for Markdown-generated ToC in rendered HTML...");
+
+      const markdownTable = contentRef.current.querySelector("table");
+      if (markdownTable) {
+        console.log("✅ Markdown Table of Contents found, replacing it...");
+
+        const newToC = document.createElement("div");
+        newToC.innerHTML = generateTableOfContents(content);
+        markdownTable.replaceWith(newToC);
+        setTableInserted(true);
+      } else {
+        console.log("❌ No Markdown Table of Contents found yet.");
+      }
+    }
+  }, [content, tableInserted]);
 
   if (!session) {
     return (
@@ -32,11 +48,10 @@ export default function Protected() {
   }
 
   const generateTableOfContents = (markdown) => {
-    console.log("Generating Table of Contents for markdown:", markdown);
     const headers = [];
     let currentNumber = [];
 
-    markdown.split("\n").forEach((line) => {
+    markdown.split("\n").forEach(line => {
       const match = line.match(/^(#+)\s*(.*)/);
       if (match) {
         const level = match[1].length;
@@ -51,7 +66,7 @@ export default function Protected() {
       }
     });
 
-    const tocTable = `
+    return `
       <table>
         <thead>
           <tr><th>Table of Contents</th></tr>
@@ -68,29 +83,12 @@ export default function Protected() {
         </tbody>
       </table>
     `;
-    console.log("Generated ToC:", tocTable);
-    return tocTable;
-  };
-
-  const replaceMarkdownTableOfContents = (markdown) => {
-    console.log("Raw markdown before replacement:", markdown);
-  
-    const tocRegex = /\| Table of Contents \|\n\|[-\s]+\|\n([\s\S]+?)\n\| <!-- \/TOC --> \|/;
-  
-    const match = markdown.match(tocRegex);
-  
-    if (match) {
-      console.log("Markdown Table of Contents found, replacing it...");
-      return markdown.replace(tocRegex, generateTableOfContents(markdown));
-    }
-  
-    console.log("No markdown Table of Contents found, returning as is.");
-    return markdown;
   };
 
   return (
     <div className={mainStyle.containerCenter}>
       <div className={mainStyle.technicalDocs}>
+        {/* Markdown Content */}
         <div ref={contentRef}>
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
