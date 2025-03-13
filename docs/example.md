@@ -17,7 +17,7 @@
     - [Mobile Performance](#mobile-performance)
   - [Mockup Woocommerce Process Diagrams](#mockup-woocommerce-process-diagrams)
     - [Woocommerce and Learn Dash integration details](#woocommerce-and-learn-dash-integration-details)
-<!-- /TOC --> 
+<!-- /TOC --> |
 ## Project requirements
 
 ### Stage 1: Documentation & Blueprint Creation
