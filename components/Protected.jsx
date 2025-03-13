@@ -11,12 +11,16 @@ export default function Protected() {
   const { data: session } = useSession();
   const [content, setContent] = useState("");
   const contentRef = useRef(null);
+  const [toc, setToc] = useState([]);
 
   useEffect(() => {
     if (session) {
       fetch("/api/docs")
         .then((res) => res.json())
-        .then((data) => setContent(data.content));
+        .then((data) => {
+          setContent(data.content);
+          generateTableOfContents(data.content);
+        });
     }
   }, [session]);
 
@@ -28,33 +32,45 @@ export default function Protected() {
     );
   }
 
+
   const handleToCClick = (e) => {
     e.preventDefault();
+    const targetId = e.target.getAttribute("href").substring(1); // Get the target ID
+    const targetElement = document.getElementById(targetId);
 
-    const targetText = e.target.innerText; 
-    const contentDiv = contentRef.current;
+    if (targetElement) {
+      targetElement.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
 
-    if (contentDiv) {
-      const matchingElement = Array.from(contentDiv.querySelectorAll("h1, h2, h3, h4, h5, h6, p"))
-        .find(el => el.innerText.trim() === targetText.trim());
+  const generateTableOfContents = (markdownContent) => {
+    const tocItems = [];
+    const headings = markdownContent.match(/(#{1,6})\s(.*?)(?=\n|$)/g);
 
-      if (matchingElement) {
-        matchingElement.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
+    if (headings) {
+      headings.forEach((heading) => {
+        const level = heading.match(/^#{1,6}/)[0].length;
+        const title = heading.replace(/^#{1,6}\s/, "").trim();
+        const id = title.toLowerCase().replace(/\s+/g, "-");
+        tocItems.push({ level, title, id });
+      });
+      setToc(tocItems);
     }
   };
 
   return (
     <div className={mainStyle.containerCenter}>
       <div className={mainStyle.technicalDocs}>
-        {/* Table of Contents - Detect Clicks */}
-        <div onClick={handleToCClick} style={{ cursor: "pointer" }}>
-          <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
-            rehypePlugins={[rehypeRaw, rehypeHighlight]}
-          >
-            {generateTableOfContents(content)}
-          </ReactMarkdown>
+        {/* Render Table of Contents dynamically */}
+        <div style={{ cursor: "pointer" }} onClick={handleToCClick}>
+          <ul>
+            {toc.map((item) => (
+              <li key={item.id}>
+                {`${"  ".repeat(item.level - 1)}${item.level === 1 ? "" : " "}`}
+                <a href={`#${item.id}`}>{item.title}</a>
+              </li>
+            ))}
+          </ul>
         </div>
 
         {/* Markdown Content */}
@@ -77,16 +93,4 @@ export default function Protected() {
       </div>
     </div>
   );
-}
-
-function generateTableOfContents(markdown) {
-  return markdown
-    .split("\n")
-    .filter(line => line.startsWith("#"))
-    .map(line => {
-      const level = line.split(" ")[0].length;
-      const title = line.replace(/^#+\s*/, "");
-      return `${"  ".repeat(level - 1)}- ${title}`;
-    })
-    .join("\n");
 }
