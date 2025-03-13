@@ -4,8 +4,20 @@
 | --- | ---| ---|
 | Tomasz Kowalski | 1.00 | 13.03.2025 |
 
-<!-- TOC -->
 
+| Table of Contents |
+| --- |
+<!-- TOC -->
+- [tuneupfitness.com - Optimization plan](#tuneupfitnesscom---optimization-plan)
+  - [Project requirements](#project-requirements)
+    - [Stage 1: Documentation \& Blueprint Creation](#stage-1-documentation--blueprint-creation)
+    - [Stage 2: Optimization \& Improvement Recommendations](#stage-2-optimization--improvement-recommendations)
+  - [Provided Documents](#provided-documents)
+  - [Page Speed Insights Analysis](#page-speed-insights-analysis)
+    - [Mobile Performance](#mobile-performance)
+  - [Mockup Woocommerce Process Diagrams](#mockup-woocommerce-process-diagrams)
+    - [Woocommerce and Learn Dash integration details](#woocommerce-and-learn-dash-integration-details)
+<!-- /TOC -->
 ## Project requirements
 
 ### Stage 1: Documentation & Blueprint Creation
@@ -35,7 +47,7 @@
 
 ## Page Speed Insights Analysis
 
-### Mobile
+### Mobile Performance
 
 | URL | Date |Performance | LCP | FCP | CLS |
 | --- | --- | --- | ---| --- | ---|
@@ -77,6 +89,20 @@ sequenceDiagram
         WooCommerce->>Customer: Payment Failed Notification
     end
 
+    %% Edge Case: WooCommerce Fails to Notify LearnDash
+    alt WooCommerce Fails to Notify LearnDash
+        WooCommerce->>Customer: Support Notification
+        Customer->>WooCommerce: Opens Support Ticket
+    end
+
+    %% Refund Handling
+    opt Customer Requests Refund
+        Customer->>WooCommerce: Refund Request
+        WooCommerce->>Payment Gateway: Process Refund
+        Payment Gateway->>WooCommerce: Refund Approved
+        WooCommerce->>LearnDash: Revoke Course Access
+        LearnDash->>Customer: Enrollment Revoked
+    end
 ```
 
 
