@@ -28,45 +28,35 @@ export default function Protected() {
     );
   }
 
+
   const handleToCClick = (e) => {
     e.preventDefault();
-    const targetId = e.target.getAttribute("href").substring(1); // Get the ID from href
-    const targetElement = document.getElementById(targetId);
 
-    if (targetElement) {
-      // Scroll to the target element smoothly
-      targetElement.scrollIntoView({ behavior: "smooth", block: "start" });
+    const targetText = e.target.innerText;
+    const contentDiv = contentRef.current;
+
+    if (contentDiv) {
+
+      const matchingElement = Array.from(contentDiv.querySelectorAll("h1, h2, h3, h4, h5, h6, p"))
+        .find(el => el.innerText.trim() === targetText.trim());
+
+      if (matchingElement) {
+        matchingElement.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
     }
   };
 
   return (
     <div className={mainStyle.containerCenter}>
       <div className={mainStyle.technicalDocs}>
-        {/* Static Table of Contents */}
-        <div style={{ cursor: "pointer" }}>
-          <ul>
-            <li><a href="#tuneupfitnesscom---optimization-plan" onClick={handleToCClick}>tuneupfitness.com - Optimization plan</a></li>
-            <li>
-              <a href="#project-requirements" onClick={handleToCClick}>Project requirements</a>
-              <ul>
-                <li><a href="#stage-1-documentation--blueprint-creation" onClick={handleToCClick}>Stage 1: Documentation & Blueprint Creation</a></li>
-                <li><a href="#stage-2-optimization--improvement-recommendations" onClick={handleToCClick}>Stage 2: Optimization & Improvement Recommendations</a></li>
-              </ul>
-            </li>
-            <li><a href="#provided-documents" onClick={handleToCClick}>Provided Documents</a></li>
-            <li>
-              <a href="#page-speed-insights-analysis" onClick={handleToCClick}>Page Speed Insights Analysis</a>
-              <ul>
-                <li><a href="#mobile-performance" onClick={handleToCClick}>Mobile Performance</a></li>
-              </ul>
-            </li>
-            <li>
-              <a href="#mockup-woocommerce-process-diagrams" onClick={handleToCClick}>Mockup Woocommerce Process Diagrams</a>
-              <ul>
-                <li><a href="#woocommerce-and-learn-dash-integration-details" onClick={handleToCClick}>Woocommerce and Learn Dash integration details</a></li>
-              </ul>
-            </li>
-          </ul>
+        {/* Table of Contents - Detect Clicks */}
+        <div onClick={handleToCClick} style={{ cursor: "pointer" }}>
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            rehypePlugins={[rehypeRaw, rehypeHighlight]}
+          >
+            {generateTableOfContents(content)}
+          </ReactMarkdown>
         </div>
 
         {/* Markdown Content */}
@@ -89,4 +79,17 @@ export default function Protected() {
       </div>
     </div>
   );
+}
+
+
+function generateTableOfContents(markdown) {
+  return markdown
+    .split("\n")
+    .filter(line => line.startsWith("#"))
+    .map(line => {
+      const level = line.split(" ")[0].length;
+      const title = line.replace(/^#+\s*/, "");
+      return `${"  ".repeat(level - 1)}- ${title}`;
+    })
+    .join("\n");
 }
