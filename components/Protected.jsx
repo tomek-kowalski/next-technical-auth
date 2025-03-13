@@ -28,25 +28,30 @@ export default function Protected() {
     );
   }
 
+  // Function to generate the Table of Contents
   const generateTableOfContents = (markdown) => {
     const headers = [];
     let currentNumber = [];
 
+    // Parse the markdown for headers and generate a hierarchical TOC
     markdown.split("\n").forEach(line => {
       const match = line.match(/^(#+)\s*(.*)/);
       if (match) {
-        const level = match[1].length;
+        const level = match[1].length; // number of "#" determines level
         const title = match[2].trim();
 
+        // Update the current number for TOC based on the header level
         currentNumber = currentNumber.slice(0, level - 1);
         currentNumber.push(currentNumber.length + 1);
 
+        // Generate a string of the current TOC number
         const tocNumber = currentNumber.join(".");
 
         headers.push({ level, title, tocNumber });
       }
     });
 
+    // Create a table of contents in HTML format
     const tocTable = `
       <table>
         <thead>
@@ -57,7 +62,7 @@ export default function Protected() {
             .map(
               ({ tocNumber, title }) => `
                 <tr>
-                  <td>${tocNumber}. <a href="#${title.toLowerCase().replace(/\s+/g, '-')}">${title}</a></td>
+                  <td>${tocNumber} <a href="#${title.toLowerCase().replace(/\s+/g, '-')}">${title}</a></td>
                 </tr>`
             )
             .join('')}
@@ -67,13 +72,12 @@ export default function Protected() {
     return tocTable;
   };
 
-
-  const replaceTableWithToC = (markdown) => {
-    const toc = generateTableOfContents(markdown);
-    return markdown.replace(/<table.*?<\/table>/, toc);
+  const insertTableOfContents = (markdown) => {
+    // Replace first instance of <table> with the generated Table of Contents
+    return markdown.replace(/<table.*?<\/table>/, generateTableOfContents(markdown));
   };
 
-  const updatedContent = replaceTableWithToC(content);
+  const updatedContent = insertTableOfContents(content);
 
   return (
     <div className={mainStyle.containerCenter}>
