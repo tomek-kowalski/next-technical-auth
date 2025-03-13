@@ -28,22 +28,6 @@ export default function Protected() {
     );
   }
 
-  const handleToCClick = (e) => {
-    e.preventDefault();
-
-    const targetText = e.target.innerText;
-    const contentDiv = contentRef.current;
-
-    if (contentDiv) {
-      const matchingElement = Array.from(contentDiv.querySelectorAll("h1, h2, h3, h4, h5, h6, p"))
-        .find(el => el.innerText.trim() === targetText.trim());
-
-      if (matchingElement) {
-        matchingElement.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
-    }
-  };
-
   const generateTableOfContents = (markdown) => {
     const headers = [];
     let currentNumber = [];
@@ -73,7 +57,7 @@ export default function Protected() {
             .map(
               ({ tocNumber, title }) => `
                 <tr>
-                  <td>${tocNumber} <a href="#${title.toLowerCase().replace(/\s+/g, '-')}">${title}</a></td>
+                  <td>${tocNumber}. <a href="#${title.toLowerCase().replace(/\s+/g, '-')}">${title}</a></td>
                 </tr>`
             )
             .join('')}
@@ -83,19 +67,18 @@ export default function Protected() {
     return tocTable;
   };
 
-  const contentWithToc = generateTableOfContents(content);
+
+  const replaceTableWithToC = (markdown) => {
+    const toc = generateTableOfContents(markdown);
+    return markdown.replace(/<table.*?<\/table>/, toc);
+  };
+
+  const updatedContent = replaceTableWithToC(content);
 
   return (
     <div className={mainStyle.containerCenter}>
       <div className={mainStyle.technicalDocs}>
-        {/* Insert Table of Contents as a table */}
-        <div
-          onClick={handleToCClick}
-          style={{ cursor: "pointer" }}
-          dangerouslySetInnerHTML={{ __html: contentWithToc }}
-        />
-
-        {/* Markdown Content */}
+        {/* Render the updated markdown content with replaced Table of Contents */}
         <div ref={contentRef}>
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
@@ -109,7 +92,7 @@ export default function Protected() {
               },
             }}
           >
-            {content}
+            {updatedContent}
           </ReactMarkdown>
         </div>
       </div>
